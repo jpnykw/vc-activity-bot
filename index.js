@@ -7,21 +7,6 @@ const config = {
     voiceChannel: 'your_id_here',
 };
 
-client.on('message', (message) => {
-    if (message.content.includes('<@!847470544798351380>')) {
-        // const author_id = message.author.id
-        // console.log(message.author)
-        // console.log(message.guild.channels.cache)
-        // console.log(message.member.voice.channelID)
-
-        const currentId = message.member.voice.channelID; // get voice channel's ID the user currently in
-        // const voiceState = new Discord.VoiceState(message.guild)
-        if (currentId !== null) {
-            message.channel.send(`You are currently in ${message.guild.channels.cache.get(currentId).name}`);
-        }
-    }
-})
-
 client.on('voiceStateUpdate', (oldState, newState) => {
     const guild = client.guilds.cache.get(newState.guild.id);
     const usersCount = guild.channels.cache.get(newState.channelID === null ? oldState.channelID : newState.channelID).members.size;
