@@ -15,12 +15,14 @@ client.on('message', (message) => {
     if (mentions.size > 0 && mentions.get('847470544798351380')) {
         const commandName = message.content.split(' ')[1];
         console.log('Executed the command:', commandName);
-        const channel = message.channel;
-        const guild = message.channel.guild;
 
-        for(let command of Command.getCommands()) {
+        const guild = message.channel.guild;
+        const channel = message.channel;
+        const author = message.author.id;
+
+        for (let command of Command.getCommands()) {
             if (command.match(commandName)) {
-                command.run(guild, channel);
+                command.exec(guild, channel, author);
                 break;
             }
         }
@@ -72,7 +74,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
         guild.channels.cache.get(config.textChannel).send(`:zap: Ended at \`${new Date}\``);
         startedFlag = false
     }
-})
+});
 
 client.on('ready', () => {
     console.log('OK');

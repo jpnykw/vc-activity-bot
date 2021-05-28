@@ -1,7 +1,8 @@
 class Command {
-    constructor(name = '', aliases = []) {
+    constructor(name = '', aliases = [], permission = null) {
         this.name = name;
         this.aliases = aliases;
+        this.permission = permission;
     }
 
     bind(method = () => null) {
@@ -13,10 +14,16 @@ class Command {
         return this.name === name || this.aliases.filter((alias) => alias === name).length > 0;
     }
 
-    run(guild = null, channel = null) {
-        if (guild === null || channel === null) return false;
+    exec(guild = null, channel = null, author = null) {
+        if (guild === null || channel === null || author === null) return false;
+        const permission = this.permission;
         const meta = { guild, channel };
-        this.method(meta);
+
+        if (permission === null || (permission !== null && permission === author)) {
+            this.method(meta);
+        } else {
+            channel.send(`you don't have permission.`);
+        }
     }
 }
 
@@ -24,18 +31,14 @@ const commands = [
     // ping
     new Command('ping')
         .bind((meta) => {
-            meta.guild.channels.cache.get(meta.channel.id).send('pong!');
-        }),
-    // random
-    new Command('random', ['rnd'])
-        .bind((meta) => {
-            const result = Math.random();
-            meta.guild.channels.cache.get(meta.channel.id).send(result);
+            meta.channel.send('pong!');
         }),
     // reboot
-    new Command('reboot', ['restart', 'reb', 'res'])
-        .bind((_) => {
-            process.exit();
+    new Command('reboot', ['restart', 'reb', 'res'], '444883622936313867')
+        .bind((meta) => {
+            meta.channel.send('see you next time...').then(() => {
+                process.exit();
+            })
         }),
 ];
 
